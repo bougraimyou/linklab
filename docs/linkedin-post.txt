@@ -1,0 +1,30 @@
+While I was writing the tests for a telecom link budget, I found a bug in my own code that would have understated every optical link by more than 100 dB.
+
+I had put free space path loss into the fibre calculation. It is a radio formula. Light inside a glass core does not spread out the way a radio wave does, so the term has no business being there at all. The tool looked completely plausible, and it would have confidently told you that a perfectly good 42 km span could not work.
+
+So I took it out, moved free space path loss into the microwave engine where it actually belongs, and wrote a test that fails if the term ever comes back.
+
+That grew into LinkLab, and it now does three things.
+
+For fibre it works out attenuation, splices, connectors and the chromatic dispersion limit, then tells you the maximum reach your optics can carry.
+
+For point to point microwave it does free space path loss, EIRP, both antenna gains, feeder losses, and the rain fade you need to leave room for.
+
+For copper it applies the TIA limits, including the insertion loss derating that kicks in when you use more than two pairs.
+
+It also checks the design before it documents it. A port can only take one cable. A panel has to physically fit in its rack. A cable has to land on a port that actually exists. When something is wrong it tells you all of it at once rather than one error at a time.
+
+Then it generates the documentation. The cable schedule, the link budgets with the working shown rather than just a verdict, and a rack elevation for every rack with each cable drawn out to its far end.
+
+The numbers come from published ITU and TIA values, and every formula in the test suite is checked against a hand computed figure instead of against whatever the code happened to produce. Fifty three tests, no runtime dependencies, and the documentation site is rebuilt and published on every push.
+
+I built it because my degree is in telecommunication systems engineering, and I kept running into the fact that the calculators and spreadsheets I needed for the kind of work I wanted were either subtly wrong or gave me a verdict with nothing behind it. I wanted a tool that showed me which term closed the link.
+
+It runs locally and it is public.
+
+Demo and documentation: https://bougraimyou.github.io/linklab
+Source: https://github.com/bougraimyou/linklab
+
+If you have used it, I would genuinely like to hear what you think. Did it give you a verdict you trusted, and did anything look wrong or feel missing? Even "the rain fade allowance should default to something other than zero" is useful to me.
+
+I am also looking for people who work on fibre or microwave links day to day and would be willing to tell me where the model is too simple.

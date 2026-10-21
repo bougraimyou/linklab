@@ -1,0 +1,55 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<style>
+  * { box-sizing: border-box; }
+  body { margin:0; background:#0d1117; font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "DejaVu Sans Mono", monospace; }
+  .win { width: 1000px; padding: 0 0 26px; }
+  .bar { display:flex; align-items:center; gap:8px; padding:14px 18px; background:#161b22; border-bottom:1px solid #21262d; }
+  .dot { width:12px; height:12px; border-radius:50%; }
+  .t { color:#8b949e; font-size:13px; margin-left:10px; }
+  pre { margin:0; padding:20px 22px; color:#c9d1d9; font-size:15px; line-height:1.62; white-space:pre; }
+  .cmd { color:#7ee787; }
+  .dim { color:#6e7681; }
+  .hi { color:#ffa657; font-weight:600; }
+  .ok { color:#3fb950; font-weight:700; }
+  .bad { color:#f85149; font-weight:700; }
+  .rule { color:#30363d; }
+</style></head>
+<body>
+<div class="win">
+  <div class="bar">
+    <div class="dot" style="background:#ff5f57"></div>
+    <div class="dot" style="background:#febc2e"></div>
+    <div class="dot" style="background:#28c840"></div>
+    <div class="t">linklab, terminal</div>
+  </div>
+<pre><span class="cmd">$</span> linklab budget fiber --length 42 --fibre smf --tx 5 --rx -28 \
+    --bitrate 10 --spectral-width 0.05 --splices 8 --connectors 6 --margin 3
+<span class="hi">Fibre budget</span>  Single mode G.652.D (standard SMF) @ 1550 nm
+  length       42.000 km
+  attenuation  0.250 dB/km <span class="dim">-></span> 10.500 dB
+  splices      0.400 dB
+  connectors   3.000 dB
+  total loss   13.900 dB
+  budget       33.000 dB
+  margin       <span class="hi">19.100 dB</span>
+  dispersion   35.7 ps, limit 117.65 km
+  max reach    118.400 km
+  verdict      <span class="ok">PASS</span>
+
+<span class="cmd">$</span> linklab budget copper --length 105 --category cat6 --pairs 4 --application 10gbase-t
+<span class="hi">Copper budget</span>  Category 6 / 10gbase-t
+  length       105.0 m
+  channel      max 90 m
+  insertion    22.470 dB
+  derating     6.000 dB
+  PS-NEXT      3.600 dB
+  total        32.070 dB of 21.4 dB allowed
+  <span class="bad">!</span> 105.0 m exceeds the 90 m channel limit.
+  <span class="bad">!</span> Total budget 32.07 dB exceeds the 21.4 dB limit for Category 6.
+  verdict      <span class="bad">FAIL</span>
+
+<span class="cmd">$</span> linklab project validate examples/site-atlas-telecom/project.json
+No findings. The project is internally consistent.</pre>
+</div>
+</body></html>
