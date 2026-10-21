@@ -10,6 +10,10 @@ elevations and a cable schedule.
 No runtime dependencies. The engine, the CLI and the documentation generator
 use only the Python standard library. The web UI is an optional extra.
 
+**Live demo: [bougraimyou.github.io/linklab](https://bougraimyou.github.io/linklab/)**
+— the generated documentation site for the worked example, published by
+GitHub Actions on every push.
+
 ![The link budget calculator](docs/images/screenshot-calculator.png)
 
 ---
@@ -37,6 +41,9 @@ git clone https://github.com/bougraimyou/linklab.git
 cd linklab
 python3 -m linklab --help
 ```
+
+The published demo of the documentation generator is at
+<bougraimyou.github.io/linklab>.
 
 No install is needed to run it from a checkout. To install it properly:
 
