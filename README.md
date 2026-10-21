@@ -10,7 +10,7 @@ elevations and a cable schedule.
 No runtime dependencies. The engine, the CLI and the documentation generator
 use only the Python standard library. The web UI is an optional extra.
 
-![The link budget calculator](docs/screenshot-calculator.png)
+![The link budget calculator](docs/images/screenshot-calculator.png)
 
 ---
 
@@ -182,7 +182,7 @@ are printed on the site.
 
 ### What the generator produces
 
-![A generated rack elevation](docs/screenshot-rack.png)
+![A generated rack elevation](docs/images/screenshot-rack.png)
 
 - an **overview** with the headline numbers and any design findings;
 - the **cable schedule**, one row per cable, both ends resolved to
@@ -194,7 +194,7 @@ are printed on the site.
   obvious way to draw this, labelling each cable where it leaves the port,
   puts the labels on top of each other the moment two cables share a panel.
 
-![The generated link budget page](docs/screenshot-links.png)
+![The generated link budget page](docs/images/screenshot-links.png)
 
 ---
 
