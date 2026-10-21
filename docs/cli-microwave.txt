@@ -1,0 +1,7 @@
+Microwave budget  15 GHz over 5.00 km
+  FSPL         129.941 dB
+  EIRP         50.000 dBm
+  received     -50.941 dBm
+  threshold    -80.000 dBm
+  margin       29.059 dB (required 10.00 dB)
+  verdict      PASS

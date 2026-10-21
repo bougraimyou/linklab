@@ -1,0 +1,11 @@
+Fibre budget  Single-mode G.652.D (standard SMF) @ 1550 nm
+  length       42.000 km
+  attenuation  0.250 dB/km -> 10.500 dB
+  splices      0.400 dB
+  connectors   3.000 dB
+  total loss   13.900 dB
+  budget       33.000 dB
+  margin       19.100 dB
+  dispersion   35.7 ps, limit 117.65 km
+  max reach    118.400 km
+  verdict      PASS

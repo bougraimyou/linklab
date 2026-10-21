@@ -1,0 +1,12 @@
+Copper budget  Category 6 / 10gbase-t
+  length       105.0 m
+  channel      max 90 m
+  permanent    max 90 m
+  insertion    22.470 dB
+  derating     6.000 dB
+  PS-NEXT      3.600 dB
+  total        32.070 dB of 21.4 dB allowed
+  ! 105.0 m exceeds the 90 m channel limit.
+  ! 105.0 m exceeds the 90 m permanent-link limit.
+  ! Total budget 32.07 dB exceeds the 21.4 dB limit for Category 6.
+  verdict      FAIL

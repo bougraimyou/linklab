@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LinkLab</title>
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/static/app.css">
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <h1>LinkLab</h1>
+    <p class="sub">Telecom link budgets and network documentation</p>
+    <nav class="tabs">
+      <button class="on" data-view="calculator">Calculator</button>
+      <button data-view="project">Project</button>
+      <button data-view="reference">Reference</button>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <!-- ---------------------------------------------------------------- -->
+  <section id="view-calculator">
+    <div class="tabs" data-tabs="medium">
+      <button class="on" data-target="fiber">Fibre</button>
+      <button data-target="microwave">Microwave</button>
+      <button data-target="copper">Copper</button>
+    </div>
+
+    <form id="form-fiber" class="card" data-panel="medium-fiber">
+      <div class="grid">
+        <label>Length (km)<input type="number" name="length_km" value="42" step="0.01"></label>
+        <label>Fibre<select name="fibre" id="fibre-select"></select></label>
+        <label>Tx power (dBm)<input type="number" name="tx_power_dbm" value="5" step="0.1"></label>
+        <label>Rx sensitivity (dBm)<input type="number" name="rx_sensitivity_dbm" value="-28" step="0.1"></label>
+        <label>Wavelength (nm)<input type="number" name="wavelength_nm" value="1550" step="1"></label>
+        <label>Bit rate (Gb/s)<input type="number" name="bitrate_gbps" value="10" step="0.1" placeholder="blank = unknown"></label>
+        <label>Spectral width (nm)<input type="number" name="spectral_width_nm" value="0.05" step="0.01"></label>
+        <label>Splices<input type="number" name="splice_count" value="8" step="1"></label>
+        <label>Connector pairs<input type="number" name="connector_pairs" value="6" step="1"></label>
+        <label>Required margin (dB)<input type="number" name="required_margin_db" value="3" step="0.1"></label>
+      </div>
+    </form>
+
+    <form id="form-microwave" class="card" data-panel="medium-microwave" hidden>
+      <div class="grid">
+        <label>Length (km)<input type="number" name="length_km" value="5" step="0.01"></label>
+        <label>Frequency (GHz)<input type="number" name="frequency_ghz" value="15" step="0.1"></label>
+        <label>Tx power (dBm)<input type="number" name="tx_power_dbm" value="20" step="0.1"></label>
+        <label>Tx antenna gain (dBi)<input type="number" name="tx_antenna_gain_dbi" value="30" step="0.1"></label>
+        <label>Rx antenna gain (dBi)<input type="number" name="rx_antenna_gain_dbi" value="30" step="0.1"></label>
+        <label>Rx threshold (dBm)<input type="number" name="rx_threshold_dbm" value="-80" step="0.1"></label>
+        <label>Tx feeder loss (dB)<input type="number" name="feeder_loss_tx_db" value="0.5" step="0.1"></label>
+        <label>Rx feeder loss (dB)<input type="number" name="feeder_loss_rx_db" value="0.5" step="0.1"></label>
+        <label>Rain fade allowance (dB)<input type="number" name="rain_fade_allowance_db" value="0" step="0.1"></label>
+        <label>Required margin (dB)<input type="number" name="required_margin_db" value="10" step="0.1"></label>
+      </div>
+    </form>
+
+    <form id="form-copper" class="card" data-panel="medium-copper" hidden>
+      <div class="grid">
+        <label>Length (m)<input type="number" name="length_m" value="80" step="0.1"></label>
+        <label>Category<select name="category" id="copper-select"></select></label>
+        <label>Pairs used<select name="pairs">
+          <option value="1">1</option><option value="2">2</option><option value="4" selected>4</option>
+        </select></label>
+        <label>Application<select name="application">
+          <option value="1gbase-t" selected>1000BASE-T</option>
+          <option value="10gbase-t">10GBASE-T</option>
+          <option value="40gbase-t">40GBASE-T</option>
+        </select></label>
+      </div>
+    </form>
+
+    <div id="result" class="card"></div>
+  </section>
+
+  <!-- ---------------------------------------------------------------- -->
+  <section id="view-project" hidden>
+    <div id="project-summary"></div>
+    <div id="project-findings"></div>
+    <div id="project-cables"></div>
+    <div id="project-spans"></div>
+  </section>
+
+  <!-- ---------------------------------------------------------------- -->
+  <section id="view-reference" hidden>
+    <div id="reference"></div>
+  </section>
+
+</main>
+
+<footer class="wrap">
+  Every figure is produced by the LinkLab engine. The formulas and the
+  standards they come from are documented in the repository, and the test
+  suite checks each one against a hand-computed value.
+</footer>
+
+<script src="/static/app.js"></script>
+</body>
+</html>

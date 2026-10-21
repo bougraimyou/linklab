@@ -1,0 +1,51 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "linklab"
+version = "1.0.0"
+description = "Telecom link budget and network documentation toolkit: fibre, microwave and copper budgets, plus generated site documentation."
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "MIT" }
+authors = [{ name = "Youcef Bougraim" }]
+keywords = [
+    "telecom",
+    "link-budget",
+    "optical-fiber",
+    "microwave",
+    "structured-cabling",
+    "network-documentation",
+    "telecommunications",
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Telecommunications Industry",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Topic :: Communications :: Telecommunications",
+    "Topic :: System :: Networking",
+]
+dependencies = []
+
+[project.optional-dependencies]
+web = ["fastapi>=0.110", "uvicorn[standard]>=0.27"]
+dev = ["pytest>=7.0"]
+
+[project.scripts]
+linklab = "linklab.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/bougraimyou/linklab"
+Repository = "https://github.com/bougraimyou/linklab"
+
+[tool.setuptools]
+packages = ["linklab"]
+
+[tool.setuptools.package-data]
+linklab = ["static/*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
