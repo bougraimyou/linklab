@@ -28,3 +28,5 @@ Source: https://github.com/bougraimyou/linklab
 If you have used it, I would genuinely like to hear what you think. Did it give you a verdict you trusted, and did anything look wrong or feel missing? Even "the rain fade allowance should default to something other than zero" is useful to me.
 
 I am also looking for people who work on fibre or microwave links day to day and would be willing to tell me where the model is too simple.
+
+#Telecom #NetworkEngineering #FiberOptics #LinkBudget #OpenSource #Python
