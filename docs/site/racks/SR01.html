@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rack SR-01 Central Alger Centre &middot; Programme de cablage - Reseau d&#x27;acces Atlas</title>
+<style>
+:root {
+  --ink: #16202b;
+  --muted: #5b6b7c;
+  --line: #dde5ec;
+  --accent: #0b6ea8;
+  --accent-soft: #e8f2f9;
+  --ok: #1a7f4b;
+  --ok-soft: #e6f4ec;
+  --bad: #b3261e;
+  --bad-soft: #fbeae9;
+  --warn: #8a5a00;
+  --warn-soft: #fdf3e0;
+  --bg: #f6f8fa;
+  --panel: #ffffff;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font: 15px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  color: var(--ink);
+  background: var(--bg);
+}
+.wrap { max-width: 1120px; margin: 0 auto; padding: 32px 24px 72px; }
+header.top { border-bottom: 1px solid var(--line); background: var(--panel); }
+header.top .wrap { padding-top: 28px; padding-bottom: 24px; }
+h1 { font-size: 26px; margin: 0 0 6px; letter-spacing: -0.01em; }
+h2 { font-size: 19px; margin: 34px 0 12px; letter-spacing: -0.01em; }
+h3 { font-size: 15px; margin: 22px 0 8px; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; }
+p.sub { color: var(--muted); margin: 0; }
+nav.tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 18px; }
+nav.tabs a {
+  display: inline-block; padding: 7px 14px; border-radius: 7px;
+  text-decoration: none; color: var(--muted); font-weight: 500; font-size: 14px;
+  border: 1px solid transparent;
+}
+nav.tabs a:hover { background: var(--accent-soft); color: var(--accent); }
+nav.tabs a.active { background: var(--accent); color: #fff; }
+.card { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 18px 20px; margin: 14px 0; }
+table { width: 100%; border-collapse: collapse; font-size: 14px; }
+th, td { text-align: left; padding: 9px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { color: var(--muted); font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: .05em; }
+tr:last-child td { border-bottom: none; }
+td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+code, .mono { font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace; font-size: 13px; }
+.pill { display: inline-block; padding: 2px 9px; border-radius: 999px; font-size: 12px; font-weight: 600; }
+.pill.ok { background: var(--ok-soft); color: var(--ok); }
+.pill.bad { background: var(--bad-soft); color: var(--bad); }
+.pill.warn { background: var(--warn-soft); color: var(--warn); }
+.stats { display: flex; gap: 12px; flex-wrap: wrap; margin: 18px 0 4px; }
+.stat { flex: 1 1 150px; background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; }
+.stat .v { font-size: 24px; font-weight: 650; letter-spacing: -0.02em; }
+.stat .k { color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: .05em; }
+.muted { color: var(--muted); }
+.small { font-size: 13px; }
+.finding { border-left: 3px solid var(--bad); background: var(--bad-soft); padding: 10px 14px; border-radius: 0 8px 8px 0; margin: 8px 0; font-size: 14px; }
+.finding.warn { border-left-color: var(--warn); background: var(--warn-soft); }
+.tabs { display: flex; gap: 2px; border-bottom: 1px solid var(--line); margin: 18px 0 0; }
+.tabs button { border: 0; background: none; padding: 9px 14px; font: inherit; font-size: 14px; color: var(--muted); cursor: pointer; border-bottom: 2px solid transparent; }
+.tabs button.on { color: var(--accent); border-bottom-color: var(--accent); font-weight: 600; }
+.tabs button:hover { color: var(--accent); }
+pre { background: var(--ink); color: #e6edf3; padding: 14px 16px; border-radius: 8px; overflow-x: auto; font-size: 13px; }
+footer { color: var(--muted); font-size: 13px; border-top: 1px solid var(--line); margin-top: 40px; padding-top: 18px; }
+a { color: var(--accent); }
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap">
+<h1>Programme de cablage - Reseau d&#x27;acces Atlas</h1>
+<p class="sub">Atlas Telecom &middot; SRO Alger Centre / SRO Oran Centre &middot; 2026-10-21</p>
+<nav class="tabs"><a href="index.html" class="">Overview</a><a href="schedule.html" class="">Cable schedule</a><a href="links.html" class="">Link budgets</a></nav>
+</div></header>
+<div class="wrap">
+
+<h2>SR-01 Central Alger Centre</h2>
+<p class="muted small">Alger Centre, Batna, Alger &middot; 42U</p>
+<div class="card"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 940 998" width="100%" role="img" aria-label="Rack elevation for SR-01 Central Alger Centre"><rect x="30" y="44" width="120" height="756" rx="6" fill="#ffffff" stroke="#b9c6d2" stroke-width="1.5"/><line x1="30" y1="782.0" x2="150" y2="782.0" stroke="#eef2f6" stroke-width="1"/><text x="24" y="786.0" font-size="8.5" fill="#93a3b1" text-anchor="end">U1</text><line x1="30" y1="764.0" x2="150" y2="764.0" stroke="#eef2f6" stroke-width="1"/><line x1="30" y1="746.0" x2="150" y2="746.0" stroke="#eef2f6" stroke-width="1"/><text x="24" y="750.0" font-size="8.5" fill="#93a3b1" text-anchor="end">U3</text><line x1="30" y1="728.0" x2="150" y2="728.0" stroke="#eef2f6" stroke-width="1"/><line x1="30" y1="710.0" x2="150" y2="710.0" stroke="#eef2f6" stroke-width="1"/><text x="24" y="714.0" font-size="8.5" fill="#93a3b1" text-anchor="end">U5</text><line x1="30" y1="692.0" x2="150" y2="692.0" stroke="#eef2f6" stroke-width="1"/><line x1="30" y1="674.0" x2="150" y2="674.0" stroke="#eef2f6" stroke-width="1"/><text x="24" y="678.0" font-size="8.5" fill="#93a3b1" text-anchor="end">U7</text><line x1="30" y1="656.0" x2="150" y2="656.0" stroke="#eef2f6" stroke-width="1"/><line x1="30" y1="638.0" x2="150" y2="638.0" stroke="#eef2f6" stroke-width="1"/><text x="24" y="642.0" font-size="8.5" fill="#93a3b1" text-anchor="end">U9</text><line x1="30" y1="620.0" x2="150" y2="620.0" stroke="#eef2f6" stroke-width="1"/><line x1="30" y1="602.0" x2="150" y2="602.0" stroke="#eef2f6" stroke-width="1"/><text x="24" y="606.0" font-size="8.5" fill="#93a3b1" text-anchor="end">U11</text><line x1="30" y1="584.0" x2="150" y2="584.0" stroke="#eef2f6" stroke-width="1"/><line x1="30" y1="566.0" x2="150" y2="566.0" stroke="#eef2f6" stroke-width="1"/><text x="24" y="570.0" font-size="8.5" fill="#93a3b1" text-anchor="end">U13</text><line x1="30" y1="548.0" x2="150" y2="548.0" stroke="#eef2f6" stroke-width="1"/><line x1="30" y1="530.0" x2="150" y2="530.0" stroke="#eef2f6" stroke-width="1"/><text x="24" y="534.0" font-size="8.5" fill="#93a3b1" text-anchor="end">U15</text><line x1="30" y1="512.0" x2="150" y2="512.0" stroke="#eef2f6" stroke-width="1"/><line x1="30" y1="494.0" x2="150" y2="494.0" stroke="#eef2f6" stroke-width="1"/><text x="24" y="498.0" font-size="8.5" fill="#93a3b1" text-anchor="end">U17</text><line x1="30" y1="476.0" x2="150" y2="476.0" stroke="#eef2f6" stroke-width="1"/><line x1="30" y1="458.0" x2="150" y2="458.0" stroke="#eef2f6" stroke-width="1"/><text x="24" y="462.0" font-size="8.5" fill="#93a3b1" text-anchor="end">U19</text><line x1="30" y1="440.0" x2="150" y2="440.0" stroke="#eef2f6" stroke-width="1"/><line x1="30" y1="422.0" x2="150" y2="422.0" stroke="#eef2f6" stroke-width="1"/><text x="24" y="426.0" font-size="8.5" fill="#93a3b1" text-anchor="end">U21</text><line x1="30" y1="404.0" x2="150" y2="404.0" stroke="#eef2f6" stroke-width="1"/><line x1="30" y1="386.0" x2="150" y2="386.0" stroke="#eef2f6" stroke-width="1"/><text x="24" y="390.0" font-size="8.5" fill="#93a3b1" text-anchor="end">U23</text><line x1="30" y1="368.0" x2="150" y2="368.0" stroke="#eef2f6" stroke-width="1"/><line x1="30" y1="350.0" x2="150" y2="350.0" stroke="#eef2f6" stroke-width="1"/><text x="24" y="354.0" font-size="8.5" fill="#93a3b1" text-anchor="end">U25</text><line x1="30" y1="332.0" x2="150" y2="332.0" stroke="#eef2f6" stroke-width="1"/><line x1="30" y1="314.0" x2="150" y2="314.0" stroke="#eef2f6" stroke-width="1"/><text x="24" y="318.0" font-size="8.5" fill="#93a3b1" text-anchor="end">U27</text><line x1="30" y1="296.0" x2="150" y2="296.0" stroke="#eef2f6" stroke-width="1"/><line x1="30" y1="278.0" x2="150" y2="278.0" stroke="#eef2f6" stroke-width="1"/><text x="24" y="282.0" font-size="8.5" fill="#93a3b1" text-anchor="end">U29</text><line x1="30" y1="260.0" x2="150" y2="260.0" stroke="#eef2f6" stroke-width="1"/><line x1="30" y1="242.0" x2="150" y2="242.0" stroke="#eef2f6" stroke-width="1"/><text x="24" y="246.0" font-size="8.5" fill="#93a3b1" text-anchor="end">U31</text><line x1="30" y1="224.0" x2="150" y2="224.0" stroke="#eef2f6" stroke-width="1"/><line x1="30" y1="206.0" x2="150" y2="206.0" stroke="#eef2f6" stroke-width="1"/><text x="24" y="210.0" font-size="8.5" fill="#93a3b1" text-anchor="end">U33</text><line x1="30" y1="188.0" x2="150" y2="188.0" stroke="#eef2f6" stroke-width="1"/><line x1="30" y1="170.0" x2="150" y2="170.0" stroke="#eef2f6" stroke-width="1"/><text x="24" y="174.0" font-size="8.5" fill="#93a3b1" text-anchor="end">U35</text><line x1="30" y1="152.0" x2="150" y2="152.0" stroke="#eef2f6" stroke-width="1"/><line x1="30" y1="134.0" x2="150" y2="134.0" stroke="#eef2f6" stroke-width="1"/><text x="24" y="138.0" font-size="8.5" fill="#93a3b1" text-anchor="end">U37</text><line x1="30" y1="116.0" x2="150" y2="116.0" stroke="#eef2f6" stroke-width="1"/><line x1="30" y1="98.0" x2="150" y2="98.0" stroke="#eef2f6" stroke-width="1"/><text x="24" y="102.0" font-size="8.5" fill="#93a3b1" text-anchor="end">U39</text><line x1="30" y1="80.0" x2="150" y2="80.0" stroke="#eef2f6" stroke-width="1"/><line x1="30" y1="62.0" x2="150" y2="62.0" stroke="#eef2f6" stroke-width="1"/><text x="24" y="66.0" font-size="8.5" fill="#93a3b1" text-anchor="end">U41</text><line x1="30" y1="44.0" x2="150" y2="44.0" stroke="#eef2f6" stroke-width="1"/><rect x="34" y="63.0" width="112" height="34.0" rx="3" fill="#f3ecfb" stroke="#b9c6d2" stroke-width="1"><title>ODF 288 fibres - odf - U40 - 6 ports</title></rect><text x="41" y="75.0" font-size="9.5" fill="#16202b" font-weight="600">ODF 288 fibres</text><text x="41" y="85.0" font-size="8" fill="#5b6b7c">odf · 6 ports</text><text x="142" y="75.0" font-size="8" fill="#5b6b7c" text-anchor="end">U40</text><rect x="34" y="261.0" width="112" height="16.0" rx="3" fill="#e6f4ec" stroke="#b9c6d2" stroke-width="1"><title>Aggregateur SR01 - switch - U30 - 5 ports</title></rect><text x="41" y="273.0" font-size="9.5" fill="#16202b" font-weight="600">Aggregateur SR01</text><text x="41" y="283.0" font-size="8" fill="#5b6b7c">switch · 5 ports</text><text x="142" y="273.0" font-size="8" fill="#5b6b7c" text-anchor="end">U30</text><rect x="34" y="441.0" width="112" height="16.0" rx="3" fill="#e8f2f9" stroke="#b9c6d2" stroke-width="1"><title>Peinture de brassage 1 - patch - U20 - 8 ports</title></rect><text x="41" y="453.0" font-size="9.5" fill="#16202b" font-weight="600">Peinture de bra…</text><text x="41" y="463.0" font-size="8" fill="#5b6b7c">patch · 8 ports</text><text x="142" y="453.0" font-size="8" fill="#5b6b7c" text-anchor="end">U20</text><rect x="34" y="459.0" width="112" height="16.0" rx="3" fill="#e8f2f9" stroke="#b9c6d2" stroke-width="1"><title>Peinture de brassage 2 - patch - U19 - 8 ports</title></rect><text x="41" y="471.0" font-size="9.5" fill="#16202b" font-weight="600">Peinture de bra…</text><text x="41" y="481.0" font-size="8" fill="#5b6b7c">patch · 8 ports</text><text x="142" y="471.0" font-size="8" fill="#5b6b7c" text-anchor="end">U19</text><path d="M 150 449.0 C 210 449.0, 280 826.0, 340 826.0" fill="none" stroke="#0b6ea8" stroke-width="1.4" opacity="0.9"/><circle cx="150" cy="449.0" r="2.8" fill="#0b6ea8"/><path d="M 150 269.0 C 210 269.0, 280 826.0, 340 826.0" fill="none" stroke="#0b6ea8" stroke-width="1.4" opacity="0.9"/><circle cx="150" cy="269.0" r="2.8" fill="#0b6ea8"/><circle cx="344" cy="826.0" r="3.2" fill="#0b6ea8"/><text x="352" y="829.5" font-size="10" fill="#3b4b5a"><tspan font-weight="600">C-001</tspan> <tspan fill="#6b7b8a">port Gi1/0/1 &rarr; SR-01 Central Alger Centre / Peinture de brassage 1 / port 01</tspan></text><path d="M 150 449.0 C 210 449.0, 280 845.0, 340 845.0" fill="none" stroke="#1a7f4b" stroke-width="1.4" opacity="0.9"/><circle cx="150" cy="449.0" r="2.8" fill="#1a7f4b"/><path d="M 150 269.0 C 210 269.0, 280 845.0, 340 845.0" fill="none" stroke="#1a7f4b" stroke-width="1.4" opacity="0.9"/><circle cx="150" cy="269.0" r="2.8" fill="#1a7f4b"/><circle cx="344" cy="845.0" r="3.2" fill="#1a7f4b"/><text x="352" y="848.5" font-size="10" fill="#3b4b5a"><tspan font-weight="600">C-002</tspan> <tspan fill="#6b7b8a">port Gi1/0/2 &rarr; SR-01 Central Alger Centre / Peinture de brassage 1 / port 02</tspan></text><path d="M 150 449.0 C 210 449.0, 280 864.0, 340 864.0" fill="none" stroke="#b3261e" stroke-width="1.4" opacity="0.9"/><circle cx="150" cy="449.0" r="2.8" fill="#b3261e"/><circle cx="344" cy="864.0" r="3.2" fill="#b3261e"/><text x="352" y="867.5" font-size="10" fill="#3b4b5a"><tspan font-weight="600">C-003</tspan> <tspan fill="#6b7b8a">port 03 &rarr; BAI-01 Baie serveurs / Peinture de brassage DC / port 01</tspan></text><path d="M 150 449.0 C 210 449.0, 280 883.0, 340 883.0" fill="none" stroke="#8a5a00" stroke-width="1.4" opacity="0.9"/><circle cx="150" cy="449.0" r="2.8" fill="#8a5a00"/><circle cx="344" cy="883.0" r="3.2" fill="#8a5a00"/><text x="352" y="886.5" font-size="10" fill="#3b4b5a"><tspan font-weight="600">C-004</tspan> <tspan fill="#6b7b8a">port 04 &rarr; BAI-01 Baie serveurs / Peinture de brassage DC / port 02</tspan></text><path d="M 150 449.0 C 210 449.0, 280 902.0, 340 902.0" fill="none" stroke="#6a3d9a" stroke-width="1.4" opacity="0.9"/><circle cx="150" cy="449.0" r="2.8" fill="#6a3d9a"/><path d="M 150 269.0 C 210 269.0, 280 902.0, 340 902.0" fill="none" stroke="#6a3d9a" stroke-width="1.4" opacity="0.9"/><circle cx="150" cy="269.0" r="2.8" fill="#6a3d9a"/><circle cx="344" cy="902.0" r="3.2" fill="#6a3d9a"/><text x="352" y="905.5" font-size="10" fill="#3b4b5a"><tspan font-weight="600">C-006</tspan> <tspan fill="#6b7b8a">port Te1/0/1 &rarr; SR-01 Central Alger Centre / Peinture de brassage 1 / port 05</tspan></text><path d="M 150 449.0 C 210 449.0, 280 921.0, 340 921.0" fill="none" stroke="#0f766e" stroke-width="1.4" opacity="0.9"/><circle cx="150" cy="449.0" r="2.8" fill="#0f766e"/><circle cx="344" cy="921.0" r="3.2" fill="#0f766e"/><text x="352" y="924.5" font-size="10" fill="#3b4b5a"><tspan font-weight="600">C-007</tspan> <tspan fill="#6b7b8a">port 06 &rarr; SR-02 Central Oran Centre / Peinture de brassage 1 / port 02</tspan></text><rect x="30" y="956" width="10" height="10" rx="2" fill="#f3ecfb" stroke="#b9c6d2"/><text x="45" y="964" font-size="10" fill="#3b4b5a">ODF 288 fibres</text><rect x="255" y="956" width="10" height="10" rx="2" fill="#e6f4ec" stroke="#b9c6d2"/><text x="270" y="964" font-size="10" fill="#3b4b5a">Aggregateur SR01</text><rect x="480" y="956" width="10" height="10" rx="2" fill="#e8f2f9" stroke="#b9c6d2"/><text x="495" y="964" font-size="10" fill="#3b4b5a">Peinture de brassage 1</text><rect x="705" y="956" width="10" height="10" rx="2" fill="#e8f2f9" stroke="#b9c6d2"/><text x="720" y="964" font-size="10" fill="#3b4b5a">Peinture de brassage 2</text></svg></div>
+<h2>Panels</h2>
+<div class="card"><table>
+<thead><tr><th>ID</th><th>Name</th><th>Kind</th><th class="num">Position</th><th class="num">Ports</th><th>Model</th></tr></thead>
+<tbody><tr><td class='mono'>ODF</td><td>ODF 288 fibres</td><td class='muted'>odf</td><td class='num'>U40</td><td class='num'>6</td><td class='muted small'>Termination 288F SC/APC</td></tr><tr><td class='mono'>SW1</td><td>Aggregateur SR01</td><td class='muted'>switch</td><td class='num'>U30</td><td class='num'>5</td><td class='muted small'>Access switch 24x 1G + 4x 10G</td></tr><tr><td class='mono'>PP1</td><td>Peinture de brassage 1</td><td class='muted'>patch</td><td class='num'>U20</td><td class='num'>8</td><td class='muted small'>24 ports Cat6A</td></tr><tr><td class='mono'>PP2</td><td>Peinture de brassage 2</td><td class='muted'>patch</td><td class='num'>U19</td><td class='num'>8</td><td class='muted small'>24 ports Cat6A</td></tr></tbody></table></div>
+<h2>Port map</h2>
+<h3>ODF 288 fibres</h3><table><thead><tr><th>Port</th><th>Cable</th><th>Far end</th></tr></thead><tbody><tr><td class='mono'>1-1</td><td class='mono'>—</td><td class='muted small'></td></tr><tr><td class='mono'>1-2</td><td class='mono'>—</td><td class='muted small'></td></tr><tr><td class='mono'>1-3</td><td class='mono'>—</td><td class='muted small'></td></tr><tr><td class='mono'>1-4</td><td class='mono'>—</td><td class='muted small'></td></tr><tr><td class='mono'>1-5</td><td class='mono'>—</td><td class='muted small'></td></tr><tr><td class='mono'>1-6</td><td class='mono'>—</td><td class='muted small'></td></tr></tbody></table><h3>Aggregateur SR01</h3><table><thead><tr><th>Port</th><th>Cable</th><th>Far end</th></tr></thead><tbody><tr><td class='mono'>Gi1/0/1</td><td class='mono'>C-001</td><td class='muted small'>SR-01 Central Alger Centre / Peinture de brassage 1 / port 01</td></tr><tr><td class='mono'>Gi1/0/2</td><td class='mono'>C-002</td><td class='muted small'>SR-01 Central Alger Centre / Peinture de brassage 1 / port 02</td></tr><tr><td class='mono'>Gi1/0/3</td><td class='mono'>—</td><td class='muted small'></td></tr><tr><td class='mono'>Gi1/0/4</td><td class='mono'>—</td><td class='muted small'></td></tr><tr><td class='mono'>Te1/0/1</td><td class='mono'>C-006</td><td class='muted small'>SR-01 Central Alger Centre / Peinture de brassage 1 / port 05</td></tr></tbody></table><h3>Peinture de brassage 1</h3><table><thead><tr><th>Port</th><th>Cable</th><th>Far end</th></tr></thead><tbody><tr><td class='mono'>01</td><td class='mono'>C-001</td><td class='muted small'>SR-01 Central Alger Centre / Aggregateur SR01 / port Gi1/0/1</td></tr><tr><td class='mono'>02</td><td class='mono'>C-002</td><td class='muted small'>SR-01 Central Alger Centre / Aggregateur SR01 / port Gi1/0/2</td></tr><tr><td class='mono'>03</td><td class='mono'>C-003</td><td class='muted small'>BAI-01 Baie serveurs / Peinture de brassage DC / port 01</td></tr><tr><td class='mono'>04</td><td class='mono'>C-004</td><td class='muted small'>BAI-01 Baie serveurs / Peinture de brassage DC / port 02</td></tr><tr><td class='mono'>05</td><td class='mono'>C-006</td><td class='muted small'>SR-01 Central Alger Centre / Aggregateur SR01 / port Te1/0/1</td></tr><tr><td class='mono'>06</td><td class='mono'>C-007</td><td class='muted small'>SR-02 Central Oran Centre / Peinture de brassage 1 / port 02</td></tr><tr><td class='mono'>07</td><td class='mono'>—</td><td class='muted small'></td></tr><tr><td class='mono'>08</td><td class='mono'>—</td><td class='muted small'></td></tr></tbody></table><h3>Peinture de brassage 2</h3><table><thead><tr><th>Port</th><th>Cable</th><th>Far end</th></tr></thead><tbody><tr><td class='mono'>01</td><td class='mono'>—</td><td class='muted small'></td></tr><tr><td class='mono'>02</td><td class='mono'>—</td><td class='muted small'></td></tr><tr><td class='mono'>03</td><td class='mono'>—</td><td class='muted small'></td></tr><tr><td class='mono'>04</td><td class='mono'>—</td><td class='muted small'></td></tr><tr><td class='mono'>05</td><td class='mono'>—</td><td class='muted small'></td></tr><tr><td class='mono'>06</td><td class='mono'>—</td><td class='muted small'></td></tr><tr><td class='mono'>07</td><td class='mono'>—</td><td class='muted small'></td></tr><tr><td class='mono'>08</td><td class='mono'>—</td><td class='muted small'></td></tr></tbody></table>
+
+<footer>Generated by LinkLab. Every figure on this site is produced by the
+engine in this repository, and every formula it uses is covered by a test.</footer>
+</div>
+<script>
+document.querySelectorAll('[data-tabs]').forEach(function (group) {
+  var buttons = group.querySelectorAll('button');
+  var panels = document.querySelectorAll('[data-panel="' + group.dataset.tabs + '"]');
+  buttons.forEach(function (b) {
+    b.addEventListener('click', function () {
+      buttons.forEach(function (x) { x.classList.remove('on'); });
+      panels.forEach(function (p) { p.hidden = true; });
+      b.classList.add('on');
+      var target = document.querySelector('[data-panel="' + group.dataset.tabs + '-' + b.dataset.target + '"]');
+      if (target) { target.hidden = false; }
+    });
+  });
+});
+</script>
+</body>
+</html>

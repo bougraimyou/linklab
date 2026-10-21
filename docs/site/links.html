@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Link budgets &middot; Programme de cablage - Reseau d&#x27;acces Atlas</title>
+<style>
+:root {
+  --ink: #16202b;
+  --muted: #5b6b7c;
+  --line: #dde5ec;
+  --accent: #0b6ea8;
+  --accent-soft: #e8f2f9;
+  --ok: #1a7f4b;
+  --ok-soft: #e6f4ec;
+  --bad: #b3261e;
+  --bad-soft: #fbeae9;
+  --warn: #8a5a00;
+  --warn-soft: #fdf3e0;
+  --bg: #f6f8fa;
+  --panel: #ffffff;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font: 15px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  color: var(--ink);
+  background: var(--bg);
+}
+.wrap { max-width: 1120px; margin: 0 auto; padding: 32px 24px 72px; }
+header.top { border-bottom: 1px solid var(--line); background: var(--panel); }
+header.top .wrap { padding-top: 28px; padding-bottom: 24px; }
+h1 { font-size: 26px; margin: 0 0 6px; letter-spacing: -0.01em; }
+h2 { font-size: 19px; margin: 34px 0 12px; letter-spacing: -0.01em; }
+h3 { font-size: 15px; margin: 22px 0 8px; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; }
+p.sub { color: var(--muted); margin: 0; }
+nav.tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 18px; }
+nav.tabs a {
+  display: inline-block; padding: 7px 14px; border-radius: 7px;
+  text-decoration: none; color: var(--muted); font-weight: 500; font-size: 14px;
+  border: 1px solid transparent;
+}
+nav.tabs a:hover { background: var(--accent-soft); color: var(--accent); }
+nav.tabs a.active { background: var(--accent); color: #fff; }
+.card { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 18px 20px; margin: 14px 0; }
+table { width: 100%; border-collapse: collapse; font-size: 14px; }
+th, td { text-align: left; padding: 9px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { color: var(--muted); font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: .05em; }
+tr:last-child td { border-bottom: none; }
+td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+code, .mono { font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace; font-size: 13px; }
+.pill { display: inline-block; padding: 2px 9px; border-radius: 999px; font-size: 12px; font-weight: 600; }
+.pill.ok { background: var(--ok-soft); color: var(--ok); }
+.pill.bad { background: var(--bad-soft); color: var(--bad); }
+.pill.warn { background: var(--warn-soft); color: var(--warn); }
+.stats { display: flex; gap: 12px; flex-wrap: wrap; margin: 18px 0 4px; }
+.stat { flex: 1 1 150px; background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; }
+.stat .v { font-size: 24px; font-weight: 650; letter-spacing: -0.02em; }
+.stat .k { color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: .05em; }
+.muted { color: var(--muted); }
+.small { font-size: 13px; }
+.finding { border-left: 3px solid var(--bad); background: var(--bad-soft); padding: 10px 14px; border-radius: 0 8px 8px 0; margin: 8px 0; font-size: 14px; }
+.finding.warn { border-left-color: var(--warn); background: var(--warn-soft); }
+.tabs { display: flex; gap: 2px; border-bottom: 1px solid var(--line); margin: 18px 0 0; }
+.tabs button { border: 0; background: none; padding: 9px 14px; font: inherit; font-size: 14px; color: var(--muted); cursor: pointer; border-bottom: 2px solid transparent; }
+.tabs button.on { color: var(--accent); border-bottom-color: var(--accent); font-weight: 600; }
+.tabs button:hover { color: var(--accent); }
+pre { background: var(--ink); color: #e6edf3; padding: 14px 16px; border-radius: 8px; overflow-x: auto; font-size: 13px; }
+footer { color: var(--muted); font-size: 13px; border-top: 1px solid var(--line); margin-top: 40px; padding-top: 18px; }
+a { color: var(--accent); }
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap">
+<h1>Programme de cablage - Reseau d&#x27;acces Atlas</h1>
+<p class="sub">Atlas Telecom &middot; SRO Alger Centre / SRO Oran Centre &middot; 2026-10-21</p>
+<nav class="tabs"><a href="index.html" class="">Overview</a><a href="schedule.html" class="">Cable schedule</a><a href="links.html" class="active">Link budgets</a></nav>
+</div></header>
+<div class="wrap">
+
+<h2>Cable budgets</h2>
+<div class="card"><table>
+<thead><tr><th>ID</th><th>A end</th><th>B end</th><th>Media</th><th class="num">Length</th><th>Verdict</th><th>Working</th></tr></thead>
+<tbody><tr><td class='mono'>C-001</td><td>SR-01 Central Alger Centre / Peinture de brassage 1 / port 01</td><td>SR-01 Central Alger Centre / Aggregateur SR01 / port Gi1/0/1</td><td class='mono'>cat6</td><td class='num'>12.5 m</td><td><span class="pill ok">PASS</span></td><td class='small muted'>2.67 dB insertion, 0.0 dB derating, 3.6 dB PS-NEXT &middot; 90 m channel</td></tr><tr><td class='mono'>C-002</td><td>SR-01 Central Alger Centre / Peinture de brassage 1 / port 02</td><td>SR-01 Central Alger Centre / Aggregateur SR01 / port Gi1/0/2</td><td class='mono'>cat6</td><td class='num'>13.0 m</td><td><span class="pill ok">PASS</span></td><td class='small muted'>2.78 dB insertion, 0.0 dB derating, 3.6 dB PS-NEXT &middot; 90 m channel</td></tr><tr><td class='mono'>C-003</td><td>SR-01 Central Alger Centre / Peinture de brassage 1 / port 03</td><td>BAI-01 Baie serveurs / Peinture de brassage DC / port 01</td><td class='mono'>cat6a</td><td class='num'>45.0 m</td><td><span class="pill ok">PASS</span></td><td class='small muted'>10.44 dB insertion, 0.0 dB derating, 3.6 dB PS-NEXT &middot; 100 m channel</td></tr><tr><td class='mono'>C-004</td><td>SR-01 Central Alger Centre / Peinture de brassage 1 / port 04</td><td>BAI-01 Baie serveurs / Peinture de brassage DC / port 02</td><td class='mono'>cat6a</td><td class='num'>46.2 m</td><td><span class="pill ok">PASS</span></td><td class='small muted'>10.72 dB insertion, 0.0 dB derating, 3.6 dB PS-NEXT &middot; 100 m channel</td></tr><tr><td class='mono'>C-005</td><td>SR-02 Central Oran Centre / Peinture de brassage 1 / port 01</td><td>SR-02 Central Oran Centre / Aggregateur SR02 / port Gi1/0/1</td><td class='mono'>cat6</td><td class='num'>8.4 m</td><td><span class="pill ok">PASS</span></td><td class='small muted'>1.80 dB insertion, 0.0 dB derating, 3.6 dB PS-NEXT &middot; 90 m channel</td></tr><tr><td class='mono'>C-006</td><td>SR-01 Central Alger Centre / Peinture de brassage 1 / port 05</td><td>SR-01 Central Alger Centre / Aggregateur SR01 / port Te1/0/1</td><td class='mono'>cat6</td><td class='num'>11.0 m</td><td><span class="pill ok">PASS</span></td><td class='small muted'>2.35 dB insertion, 0.0 dB derating, 3.6 dB PS-NEXT &middot; 90 m channel</td></tr><tr><td class='mono'>C-007</td><td>SR-01 Central Alger Centre / Peinture de brassage 1 / port 06</td><td>SR-02 Central Oran Centre / Peinture de brassage 1 / port 02</td><td class='mono'>cat6</td><td class='num'>55.0 m</td><td><span class="pill ok">PASS</span></td><td class='small muted'>11.77 dB insertion, 0.0 dB derating, 3.6 dB PS-NEXT &middot; 90 m channel</td></tr><tr><td class='mono'>C-008</td><td>SR-02 Central Oran Centre / Peinture de brassage 1 / port 03</td><td>SR-02 Central Oran Centre / Aggregateur SR02 / port Gi1/0/2</td><td class='mono'>cat6</td><td class='num'>8.8 m</td><td><span class="pill ok">PASS</span></td><td class='small muted'>1.88 dB insertion, 0.0 dB derating, 3.6 dB PS-NEXT &middot; 90 m channel</td></tr><tr><td class='mono'>C-009</td><td>BAI-01 Baie serveurs / Peinture de brassage DC / port 03</td><td>BAI-01 Baie serveurs / Commutateur de distribution / port Gi1/0/1</td><td class='mono'>cat6a</td><td class='num'>3.2 m</td><td><span class="pill ok">PASS</span></td><td class='small muted'>0.74 dB insertion, 0.0 dB derating, 3.6 dB PS-NEXT &middot; 100 m channel</td></tr></tbody></table></div>
+<h2>Optical span budgets</h2>
+<div class="card"><table>
+<thead><tr><th>ID</th><th>A end</th><th>B end</th><th>Fibre</th><th class="num">Length</th><th class="num">Margin</th><th>Verdict</th><th>Working</th></tr></thead>
+<tbody><tr><td class='mono'>SP-001</td><td>SR-01 Central Alger Centre</td><td>SR-02 Central Oran Centre</td><td class='mono'>smf</td><td class='num'>42.00 km</td><td class='num'>19.10 dB</td><td><span class="pill ok">PASS</span></td><td class='small muted'>10.50 dB fibre, 0.40 dB splices, 3.00 dB connectors; dispersion limit 117.6 km, penalty 0.52 dB</td></tr><tr><td class='mono'>SP-002</td><td>SR-01 Central Alger Centre</td><td>BAI-01 Baie serveurs</td><td class='mono'>smf-le</td><td class='num'>0.35 km</td><td class='num'>28.91 dB</td><td><span class="pill ok">PASS</span></td><td class='small muted'>0.09 dB fibre, 0.00 dB splices, 1.00 dB connectors; dispersion limit 588.2 km, penalty 0.00 dB</td></tr></tbody></table></div>
+
+<footer>Generated by LinkLab. Every figure on this site is produced by the
+engine in this repository, and every formula it uses is covered by a test.</footer>
+</div>
+<script>
+document.querySelectorAll('[data-tabs]').forEach(function (group) {
+  var buttons = group.querySelectorAll('button');
+  var panels = document.querySelectorAll('[data-panel="' + group.dataset.tabs + '"]');
+  buttons.forEach(function (b) {
+    b.addEventListener('click', function () {
+      buttons.forEach(function (x) { x.classList.remove('on'); });
+      panels.forEach(function (p) { p.hidden = true; });
+      b.classList.add('on');
+      var target = document.querySelector('[data-panel="' + group.dataset.tabs + '-' + b.dataset.target + '"]');
+      if (target) { target.hidden = false; }
+    });
+  });
+});
+</script>
+</body>
+</html>
