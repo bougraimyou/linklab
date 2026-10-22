@@ -181,8 +181,14 @@ def _cmd_docs(args) -> int:
 
 
 def _cmd_serve(args) -> int:
+    from .server import serve
+
+    # The web dependencies are imported inside server.build_app(), reached
+    # only when serve() runs, so the friendly message has to wrap the call
+    # itself: on a plain install importing the module alone succeeds and the
+    # failure would otherwise surface as a chained traceback.
     try:
-        from .server import serve
+        serve(args.project, host=args.host, port=args.port)
     except ImportError:
         print(
             "The web UI needs extra dependencies. Install them with:\n"
@@ -190,7 +196,6 @@ def _cmd_serve(args) -> int:
             file=sys.stderr,
         )
         return 1
-    serve(args.project, host=args.host, port=args.port)
     return 0
 
 
@@ -296,7 +301,10 @@ def main(argv: Optional[List[str]] = None) -> int:
     args = parser.parse_args(argv)
     try:
         return args.func(args)
-    except (ValueError, KeyError) as exc:
+    except (ValueError, KeyError, TypeError) as exc:
+        # TypeError too: malformed project JSON (a null length, a bare int
+        # where a dict belongs in an odd place) is the same class of user
+        # error as a bad value, not a traceback.
         print(f"error: {exc}", file=sys.stderr)
         return 2
     except FileNotFoundError as exc:

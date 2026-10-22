@@ -203,6 +203,12 @@ def test_a_negative_length_is_an_error():
     assert "negative-length" in codes(p)
 
 
+def test_a_cable_with_a_non_finite_length_is_an_error():
+    p = make_project()
+    p.cables[0].length_m = float("nan")
+    assert "negative-length" in codes(p)
+
+
 def test_a_panel_with_no_ports_is_a_warning_not_an_error():
     p = make_project()
     p.racks[0].panels.append(
@@ -211,6 +217,131 @@ def test_a_panel_with_no_ports_is_a_warning_not_an_error():
     findings = validate_project(p)
     assert "panel-no-ports" in {f.code for f in findings}
     assert not has_errors(findings)
+
+
+# ---------------------------------------------------------------------------
+# rack ids
+# ---------------------------------------------------------------------------
+
+
+def test_a_rack_id_with_a_slash_is_an_error():
+    p = make_project()
+    p.racks[0].id = "a/b"
+    assert "invalid-rack-id" in codes(p)
+
+
+def test_a_relative_rack_id_is_an_error():
+    p = make_project()
+    p.racks[0].id = "../evil"
+    assert "invalid-rack-id" in codes(p)
+
+
+def test_an_absolute_rack_id_is_an_error():
+    p = make_project()
+    p.racks[0].id = "/tmp/evil"
+    assert "invalid-rack-id" in codes(p)
+
+
+def test_a_rack_id_starting_with_a_dot_is_an_error():
+    p = make_project()
+    p.racks[0].id = ".."
+    assert "invalid-rack-id" in codes(p)
+
+
+def test_a_rack_id_may_use_letters_digits_dashes_and_underscores():
+    p = make_project()
+    p.racks[0].id = "SR-01_v2"
+    for panel in p.racks[0].panels:
+        panel.rack_id = "SR-01_v2"
+    p.cables = [
+        Cable(id="C1", a_end="SR-01_v2.PP1.01", b_end="SR-01_v2.SW1.Gi1/0/1", length_m=5.0)
+    ]
+    assert validate_project(p) == []
+
+
+# ---------------------------------------------------------------------------
+# optical spans
+# ---------------------------------------------------------------------------
+
+
+def test_a_span_with_an_unknown_fibre_type_is_an_error():
+    p = make_project()
+    p.optical_spans.append(
+        OpticalSpan(id="SP-9", a_end="A", b_end="B", length_km=1.0, fibre="g653")
+    )
+    assert "unknown-span-fibre" in codes(p)
+
+
+def test_a_span_with_a_non_finite_length_is_an_error():
+    p = make_project()
+    p.optical_spans.append(
+        OpticalSpan(id="SP-9", a_end="A", b_end="B", length_km=float("nan"))
+    )
+    assert "bad-span-length" in codes(p)
+
+
+def test_a_span_with_non_finite_optics_is_an_error():
+    p = make_project()
+    p.optical_spans.append(
+        OpticalSpan(
+            id="SP-9", a_end="A", b_end="B", length_km=1.0, tx_power_dbm=float("nan")
+        )
+    )
+    assert "bad-span-optics" in codes(p)
+
+
+def test_a_span_with_a_non_positive_spectral_width_is_an_error():
+    p = make_project()
+    p.optical_spans.append(
+        OpticalSpan(id="SP-9", a_end="A", b_end="B", length_km=1.0, spectral_width_nm=0.0)
+    )
+    assert "bad-span-optics" in codes(p)
+
+
+def test_a_span_with_a_garbage_bitrate_is_an_error():
+    p = make_project()
+    p.optical_spans.append(
+        OpticalSpan(id="SP-9", a_end="A", b_end="B", length_km=1.0, bitrate_gbps=-5.0)
+    )
+    assert "bad-span-optics" in codes(p)
+
+
+# ---------------------------------------------------------------------------
+# malformed projects
+# ---------------------------------------------------------------------------
+
+
+def test_a_non_object_project_is_rejected_with_a_clean_message():
+    with pytest.raises(ValueError) as excinfo:
+        project_from_dict([1, 2])
+    assert "expected an object for 'project'" in str(excinfo.value)
+
+
+def test_racks_as_a_string_is_rejected_with_a_clean_message():
+    with pytest.raises(ValueError) as excinfo:
+        project_from_dict({"racks": "x"})
+    assert "expected a list for 'racks'" in str(excinfo.value)
+
+
+def test_cables_as_scalars_are_rejected_with_a_clean_message():
+    with pytest.raises(ValueError) as excinfo:
+        project_from_dict({"cables": [1, 2]})
+    assert "expected an object for 'cables[0]'" in str(excinfo.value)
+
+
+def test_panels_as_a_number_is_rejected_with_a_clean_message():
+    with pytest.raises(ValueError) as excinfo:
+        project_from_dict({"racks": [{"id": "R1", "panels": 5}]})
+    assert "expected a list for 'racks[0].panels'" in str(excinfo.value)
+
+
+def test_a_nan_span_length_loaded_from_json_is_a_finding():
+    # Python's JSON reader accepts a bare NaN literal, so the loader sees
+    # one too; the validator must refuse to let it become a PASS.
+    project = project_from_dict(
+        {"optical_spans": [{"id": "SP-9", "a_end": "A", "b_end": "B", "length_km": float("nan")}]}
+    )
+    assert "bad-span-length" in codes(project)
 
 
 # ---------------------------------------------------------------------------

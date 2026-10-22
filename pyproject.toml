@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "linklab"
-version = "1.0.0"
+version = "1.1.0"
 description = "Telecom link budget and network documentation toolkit: fibre, microwave and copper budgets, plus generated site documentation."
 readme = "README.md"
 requires-python = ">=3.9"

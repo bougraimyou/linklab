@@ -26,21 +26,33 @@ from .project import load_project, validate_project
 from .units import fspl_db
 
 
+def _number(body: Dict[str, Any], key: str, default: float) -> float:
+    """A number from the request body, or the default when it is absent.
+
+    The shipped form sends ``null`` for every field the user left blank
+    (blank means "unknown"), and ``float(None)`` would raise TypeError and
+    land on the client as an HTTP 500. An explicitly null field therefore
+    counts as omitted.
+    """
+    value = body.get(key, default)
+    if value is None:
+        return default
+    return float(value)
+
+
 def _fibre_payload(body: Dict[str, Any]) -> Dict[str, Any]:
     optics = Optics(
-        tx_power_dbm=float(body.get("tx_power_dbm", 0.0)),
-        rx_sensitivity_dbm=float(body.get("rx_sensitivity_dbm", -28.0)),
-        wavelength_nm=int(body.get("wavelength_nm", 1550)),
-        bitrate_gbps=(
-            float(body["bitrate_gbps"]) if body.get("bitrate_gbps") else None
-        ),
-        spectral_width_nm=float(body.get("spectral_width_nm", 0.1)),
-        splice_count=int(body.get("splice_count", 0)),
-        connector_pairs=int(body.get("connector_pairs", 2)),
-        required_margin_db=float(body.get("required_margin_db", 0.0)),
+        tx_power_dbm=_number(body, "tx_power_dbm", 0.0),
+        rx_sensitivity_dbm=_number(body, "rx_sensitivity_dbm", -28.0),
+        wavelength_nm=int(_number(body, "wavelength_nm", 1550)),
+        bitrate_gbps=(_number(body, "bitrate_gbps", 0.0) or None),
+        spectral_width_nm=_number(body, "spectral_width_nm", 0.1),
+        splice_count=int(_number(body, "splice_count", 0)),
+        connector_pairs=int(_number(body, "connector_pairs", 2)),
+        required_margin_db=_number(body, "required_margin_db", 0.0),
     )
     result = compute_fiber_budget(
-        float(body.get("length_km", 1.0)),
+        _number(body, "length_km", 1.0),
         str(body.get("fibre", "smf")),
         optics,
     )
@@ -49,25 +61,25 @@ def _fibre_payload(body: Dict[str, Any]) -> Dict[str, Any]:
 
 def _microwave_payload(body: Dict[str, Any]) -> Dict[str, Any]:
     result = compute_microwave_budget(
-        length_km=float(body.get("length_km", 1.0)),
-        frequency_ghz=float(body.get("frequency_ghz", 15.0)),
-        tx_power_dbm=float(body.get("tx_power_dbm", 20.0)),
-        tx_antenna_gain_dbi=float(body.get("tx_antenna_gain_dbi", 0.0)),
-        rx_antenna_gain_dbi=float(body.get("rx_antenna_gain_dbi", 30.0)),
-        rx_threshold_dbm=float(body.get("rx_threshold_dbm", -80.0)),
-        feeder_loss_tx_db=float(body.get("feeder_loss_tx_db", 0.5)),
-        feeder_loss_rx_db=float(body.get("feeder_loss_rx_db", 0.5)),
-        rain_fade_allowance_db=float(body.get("rain_fade_allowance_db", 0.0)),
-        required_margin_db=float(body.get("required_margin_db", 10.0)),
+        length_km=_number(body, "length_km", 1.0),
+        frequency_ghz=_number(body, "frequency_ghz", 15.0),
+        tx_power_dbm=_number(body, "tx_power_dbm", 20.0),
+        tx_antenna_gain_dbi=_number(body, "tx_antenna_gain_dbi", 0.0),
+        rx_antenna_gain_dbi=_number(body, "rx_antenna_gain_dbi", 30.0),
+        rx_threshold_dbm=_number(body, "rx_threshold_dbm", -80.0),
+        feeder_loss_tx_db=_number(body, "feeder_loss_tx_db", 0.5),
+        feeder_loss_rx_db=_number(body, "feeder_loss_rx_db", 0.5),
+        rain_fade_allowance_db=_number(body, "rain_fade_allowance_db", 0.0),
+        required_margin_db=_number(body, "required_margin_db", 10.0),
     )
     return result.to_dict()
 
 
 def _copper_payload(body: Dict[str, Any]) -> Dict[str, Any]:
     result = compute_copper_budget(
-        length_m=float(body.get("length_m", 10.0)),
+        length_m=_number(body, "length_m", 10.0),
         category=str(body.get("category", "cat6")),
-        pairs=int(body.get("pairs", 4)),
+        pairs=int(_number(body, "pairs", 4)),
         application=str(body.get("application", "1gbase-t")),
     )
     return result.to_dict()
@@ -163,15 +175,26 @@ def build_app(project_path: str):
     @app.post("/api/budget")
     async def api_budget(request: Request) -> JSONResponse:
         body = await request.json()
+        if not isinstance(body, dict):
+            # A JSON body that is not an object has no medium to name: that
+            # is a client error, not a traceback.
+            return JSONResponse(
+                {"error": "the request body must be a JSON object"},
+                status_code=400,
+            )
         medium = str(body.get("medium", "fiber"))
         try:
             if medium == "microwave":
                 data = _microwave_payload(body)
             elif medium == "copper":
                 data = _copper_payload(body)
-            else:
+            elif medium == "fiber":
                 data = _fibre_payload(body)
-        except (ValueError, KeyError) as exc:
+            else:
+                return JSONResponse(
+                    {"error": f"unknown medium: {medium}"}, status_code=400
+                )
+        except (ValueError, TypeError, KeyError) as exc:
             return JSONResponse({"error": str(exc)}, status_code=400)
         return JSONResponse(data)
 

@@ -9,15 +9,23 @@ pass.
 """
 
 import json
+import math
+import re
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Dict, List, Optional
 
+from .media import FIBRE_TYPES
 from .models import CABLE_MEDIA, Cable, OpticalSpan, Panel, Project, Rack
 
 #: Severity of a validation finding.
 ERROR = "error"
 WARNING = "warning"
+
+#: Rack ids become URLs and file names on the site (``racks/<id>.html``), so
+#: they are restricted to characters that are safe in both positions: no
+#: separators, no leading dot, nothing that can climb out of a folder.
+RACK_ID_PATTERN = re.compile(r"[A-Za-z0-9][A-Za-z0-9._-]*")
 
 
 @dataclass
@@ -34,6 +42,28 @@ class Finding:
         return f"{self.severity.upper()}: {self.message}{where}"
 
 
+def _expect_dict(data: object, where: str) -> Dict:
+    """Accept ``data`` only when it is a JSON object."""
+    if not isinstance(data, dict):
+        raise ValueError(f"expected an object for '{where}', got {type(data).__name__}")
+    return data
+
+
+def _expect_list(data: object, where: str) -> List:
+    """Accept ``data`` only when it is a JSON array."""
+    if not isinstance(data, list):
+        raise ValueError(f"expected a list for '{where}', got {type(data).__name__}")
+    return data
+
+
+def _dictionaries(items: object, where: str) -> List[Dict]:
+    """Every element of an array, checked to be an object and named by index."""
+    return [
+        _expect_dict(item, f"{where}[{i}]")
+        for i, item in enumerate(_expect_list(items, where))
+    ]
+
+
 def _panel_from_dict(data: Dict) -> Panel:
     return Panel(
         id=data.get("id", ""),
@@ -48,25 +78,32 @@ def _panel_from_dict(data: Dict) -> Panel:
     )
 
 
-def _rack_from_dict(data: Dict) -> Rack:
+def _rack_from_dict(data: Dict, where: str) -> Rack:
     return Rack(
         id=data.get("id", ""),
         name=data.get("name", ""),
         location=data.get("location", ""),
         u_height=int(data.get("u_height", 42)),
-        panels=[_panel_from_dict(p) for p in data.get("panels", [])],
+        panels=[
+            _panel_from_dict(p)
+            for p in _dictionaries(data.get("panels", []), f"{where}.panels")
+        ],
     )
 
 
 def project_from_dict(data: Dict) -> Project:
     """Build a :class:`~linklab.models.Project` from plain dictionaries."""
+    _expect_dict(data, "project")
     return Project(
         name=data.get("name", "Untitled project"),
         client=data.get("client", ""),
         site=data.get("site", ""),
         author=data.get("author", ""),
         date=data.get("date", ""),
-        racks=[_rack_from_dict(r) for r in data.get("racks", [])],
+        racks=[
+            _rack_from_dict(r, f"racks[{i}]")
+            for i, r in enumerate(_dictionaries(data.get("racks", []), "racks"))
+        ],
         cables=[
             Cable(
                 id=c.get("id", ""),
@@ -78,7 +115,7 @@ def project_from_dict(data: Dict) -> Project:
                 color=c.get("color", ""),
                 notes=c.get("notes", ""),
             )
-            for c in data.get("cables", [])
+            for c in _dictionaries(data.get("cables", []), "cables")
         ],
         optical_spans=[
             OpticalSpan(
@@ -98,7 +135,7 @@ def project_from_dict(data: Dict) -> Project:
                 required_margin_db=float(s.get("required_margin_db", 0.0)),
                 notes=s.get("notes", ""),
             )
-            for s in data.get("optical_spans", [])
+            for s in _dictionaries(data.get("optical_spans", []), "optical_spans")
         ],
     )
 
@@ -139,6 +176,20 @@ def validate_project(project: Project) -> List[Finding]:
         )
 
     for rack in project.racks:
+        # A rack id becomes a path (out/racks/<id>.html) as well as a label,
+        # so anything that would climb out of the output folder is refused
+        # outright rather than merely quoted back.
+        if not RACK_ID_PATTERN.fullmatch(rack.id):
+            findings.append(
+                Finding(
+                    ERROR,
+                    "invalid-rack-id",
+                    f"Rack {rack.id} is not a valid rack id: ids may use letters, "
+                    "digits, dots, dashes and underscores, and must start with a "
+                    "letter or a digit.",
+                    rack.id,
+                )
+            )
         panel_ids = [p.id for p in rack.panels]
         if len(set(panel_ids)) != len(panel_ids):
             findings.append(
@@ -245,7 +296,16 @@ def validate_project(project: Project) -> List[Finding]:
                     cable.id,
                 )
             )
-        if cable.length_m < 0:
+        if not math.isfinite(cable.length_m):
+            findings.append(
+                Finding(
+                    ERROR,
+                    "negative-length",
+                    f"Cable {cable.id} has a length that is not a finite number.",
+                    cable.id,
+                )
+            )
+        elif cable.length_m < 0:
             findings.append(
                 Finding(
                     ERROR,
@@ -268,12 +328,70 @@ def validate_project(project: Project) -> List[Finding]:
             )
 
     for span in project.optical_spans:
-        if span.length_km <= 0:
+        if not math.isfinite(span.length_km):
+            findings.append(
+                Finding(
+                    ERROR,
+                    "bad-span-length",
+                    f"Optical span {span.id} has a length that is not a finite number.",
+                    span.id,
+                )
+            )
+        elif span.length_km <= 0:
             findings.append(
                 Finding(
                     ERROR,
                     "bad-span-length",
                     f"Optical span {span.id} has a non-positive length.",
+                    span.id,
+                )
+            )
+        if span.fibre not in FIBRE_TYPES:
+            findings.append(
+                Finding(
+                    ERROR,
+                    "unknown-span-fibre",
+                    f"Optical span {span.id} uses unknown fibre type '{span.fibre}'.",
+                    span.id,
+                )
+            )
+        # The span's optics are computed by the fibre engine during a build;
+        # a NaN there would render as a PASS, and a value the engine refuses
+        # would abort it, so both are found here instead.
+        for label, value in (
+            ("transmit power", span.tx_power_dbm),
+            ("receiver sensitivity", span.rx_sensitivity_dbm),
+            ("required margin", span.required_margin_db),
+        ):
+            if not math.isfinite(value):
+                findings.append(
+                    Finding(
+                        ERROR,
+                        "bad-span-optics",
+                        f"Optical span {span.id} has a {label} that is not a "
+                        "finite number.",
+                        span.id,
+                    )
+                )
+        if not math.isfinite(span.spectral_width_nm) or span.spectral_width_nm <= 0:
+            findings.append(
+                Finding(
+                    ERROR,
+                    "bad-span-optics",
+                    f"Optical span {span.id} has a spectral width that is not a "
+                    "finite positive number.",
+                    span.id,
+                )
+            )
+        if span.bitrate_gbps is not None and (
+            not math.isfinite(span.bitrate_gbps) or span.bitrate_gbps <= 0
+        ):
+            findings.append(
+                Finding(
+                    ERROR,
+                    "bad-span-optics",
+                    f"Optical span {span.id} has a bitrate that is not a finite "
+                    "positive number.",
                     span.id,
                 )
             )

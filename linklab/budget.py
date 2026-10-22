@@ -19,6 +19,7 @@ the output of a link budget is the working: a reader has to see *which* term
 closed the link.
 """
 
+import math
 from dataclasses import asdict, dataclass, field
 from typing import Dict, List, Optional
 
@@ -172,13 +173,29 @@ def compute_fiber_budget(
     :param optics: transceiver characteristics; a conservative default is used
         when omitted.
     """
-    if length_km <= 0:
-        raise ValueError("length must be > 0")
+    if not math.isfinite(length_km) or length_km <= 0:
+        raise ValueError("length must be a finite number > 0")
     if fibre_key not in FIBRE_TYPES:
         raise ValueError(f"unknown fibre type: { fibre_key }")
     fibre: FibreType = FIBRE_TYPES[fibre_key]
     if optics is None:
         optics = Optics(tx_power_dbm=0.0, rx_sensitivity_dbm=-28.0)
+    # NaN slips past every <= 0 / < 0 comparison and every pass/fail
+    # inequality is false for it, so an unguarded NaN would end in a PASS
+    # verdict. Each supplied number a verdict depends on is therefore
+    # checked to be finite.
+    if not math.isfinite(optics.tx_power_dbm):
+        raise ValueError("transmit power must be a finite number")
+    if not math.isfinite(optics.rx_sensitivity_dbm):
+        raise ValueError("receiver sensitivity must be a finite number")
+    if optics.bitrate_gbps is not None and (
+        not math.isfinite(optics.bitrate_gbps) or optics.bitrate_gbps <= 0
+    ):
+        raise ValueError("bitrate must be a finite number > 0")
+    if not math.isfinite(optics.spectral_width_nm) or optics.spectral_width_nm <= 0:
+        raise ValueError("spectral width must be a finite number > 0")
+    if not math.isfinite(optics.required_margin_db):
+        raise ValueError("required margin must be a finite number")
 
     attenuation = attenuation_db_per_km(fibre, optics.wavelength_nm)
     fiber_loss = attenuation * length_km
@@ -195,7 +212,14 @@ def compute_fiber_budget(
         dispersion_penalty_db(dispersion_total, bit_period_ps) if bit_period_ps else 0.0
     )
     dispersion_limit = None
-    if optics.bitrate_gbps and fibre.dispersion_ps_nm_km > 0:
+    # The width is already validated above; keeping it in the condition
+    # means the limit is simply not computed rather than being computed as
+    # a division by zero.
+    if (
+        optics.bitrate_gbps
+        and fibre.dispersion_ps_nm_km > 0
+        and optics.spectral_width_nm > 0
+    ):
         dispersion_limit = (
             1000.0
             / (optics.bitrate_gbps * fibre.dispersion_ps_nm_km * optics.spectral_width_nm)
@@ -284,10 +308,24 @@ def compute_microwave_budget(
     :param rain_fade_allowance_db: fade margin to set aside for rain.
     :param required_margin_db: margin that must remain after all losses.
     """
-    if length_km <= 0:
-        raise ValueError("length must be > 0")
-    if frequency_ghz <= 0:
-        raise ValueError("frequency must be > 0")
+    if not math.isfinite(length_km) or length_km <= 0:
+        raise ValueError("length must be a finite number > 0")
+    if not math.isfinite(frequency_ghz) or frequency_ghz <= 0:
+        raise ValueError("frequency must be a finite number > 0")
+    # As in the fibre engine: NaN is false for every comparison, so each
+    # number the verdict depends on must be finite outright.
+    for name, value in (
+        ("transmit power", tx_power_dbm),
+        ("transmit antenna gain", tx_antenna_gain_dbi),
+        ("receive antenna gain", rx_antenna_gain_dbi),
+        ("receiver threshold", rx_threshold_dbm),
+        ("transmit feeder loss", feeder_loss_tx_db),
+        ("receive feeder loss", feeder_loss_rx_db),
+        ("rain fade allowance", rain_fade_allowance_db),
+        ("required margin", required_margin_db),
+    ):
+        if not math.isfinite(value):
+            raise ValueError(f"{name} must be a finite number")
 
     path = fspl_db(length_km, frequency_ghz * 1.0e9)
     eirp = tx_power_dbm + tx_antenna_gain_dbi
@@ -347,8 +385,8 @@ def compute_copper_budget(
     :param pairs: number of pairs actually used (1, 2 or 4).
     :param application: one of ``1gbase-t``, ``10gbase-t``, ``40gbase-t``.
     """
-    if length_m <= 0:
-        raise ValueError("length must be > 0")
+    if not math.isfinite(length_m) or length_m <= 0:
+        raise ValueError("length must be a finite number > 0")
     if category not in COPPER_TYPES:
         raise ValueError(f"unknown copper category: { category }")
     copper: CopperType = COPPER_TYPES[category]

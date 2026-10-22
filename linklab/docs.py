@@ -160,31 +160,51 @@ def _pill(verdict: str) -> str:
     return f'<span class="pill {cls}">{esc(verdict)}</span>'
 
 
+def _rack_filename(rack_id: str) -> str:
+    """The file name - and the href - of a rack page.
+
+    Only the bare name of the id is used. Rack ids are validated
+    (``invalid-rack-id``), but ``--force`` documents a flagged project
+    anyway, so a hostile id such as ``../../evil`` or an absolute path must
+    not be able to move the page out of ``out/racks``.
+    """
+    return f"{Path(rack_id).name}.html"
+
+
 def _cable_row(project: Project, cable) -> str:
-    if cable.media in COPPER_TYPES:
-        pairs = 4
-        budget = compute_copper_budget(
-            max(cable.length_m, 0.01), cable.media, pairs=pairs, application="1gbase-t"
-        )
-        verdict = budget.verdict
-        detail = (
-            f"{budget.insertion_loss_db:.2f} dB insertion, "
-            f"{budget.derating_db:.1f} dB derating, "
-            f"{budget.ps_next_penalty_db:.1f} dB PS-NEXT"
-        )
-        limit = f"{budget.channel_max_m:.0f} m channel"
-    else:
-        optics = Optics(tx_power_dbm=2.0, rx_sensitivity_dbm=-28.0)
-        budget = compute_fiber_budget(
-            max(cable.length_m / 1000.0, 0.001), cable.media, optics
-        )
-        verdict = budget.verdict
-        detail = (
-            f"{budget.fiber_loss_db:.2f} dB fibre, "
-            f"{budget.splice_loss_db:.2f} dB splices, "
-            f"{budget.connector_loss_db:.2f} dB connectors"
-        )
-        limit = f"{budget.max_reach_km:.1f} km reach"
+    try:
+        if cable.media in COPPER_TYPES:
+            pairs = 4
+            budget = compute_copper_budget(
+                max(cable.length_m, 0.01), cable.media, pairs=pairs, application="1gbase-t"
+            )
+            verdict = budget.verdict
+            detail = (
+                f"{budget.insertion_loss_db:.2f} dB insertion, "
+                f"{budget.derating_db:.1f} dB derating, "
+                f"{budget.ps_next_penalty_db:.1f} dB PS-NEXT"
+            )
+            limit = f"{budget.channel_max_m:.0f} m channel"
+        else:
+            optics = Optics(tx_power_dbm=2.0, rx_sensitivity_dbm=-28.0)
+            budget = compute_fiber_budget(
+                max(cable.length_m / 1000.0, 0.001), cable.media, optics
+            )
+            verdict = budget.verdict
+            detail = (
+                f"{budget.fiber_loss_db:.2f} dB fibre, "
+                f"{budget.splice_loss_db:.2f} dB splices, "
+                f"{budget.connector_loss_db:.2f} dB connectors"
+            )
+            limit = f"{budget.max_reach_km:.1f} km reach"
+    except ValueError as exc:
+        # --force documents a flagged project, so a budget the engine
+        # refuses to compute (unknown media, a nonsense length) is written
+        # as a fail row instead of aborting the whole site.
+        verdict = "FAIL"
+        detail = f"budget could not be computed: {exc}"
+        limit = ""
+    working = f"{esc(detail)} &middot; {esc(limit)}" if limit else esc(detail)
     return (
         f"<tr><td class='mono'>{esc(cable.id)}</td>"
         f"<td>{esc(project.describe_endpoint(cable.a_end))}</td>"
@@ -192,7 +212,7 @@ def _cable_row(project: Project, cable) -> str:
         f"<td class='mono'>{esc(cable.media)}</td>"
         f"<td class='num'>{cable.length_m:.1f} m</td>"
         f"<td>{_pill(verdict)}</td>"
-        f"<td class='small muted'>{esc(detail)} &middot; {esc(limit)}</td></tr>"
+        f"<td class='small muted'>{working}</td></tr>"
     )
 
 
@@ -209,24 +229,34 @@ def _span_rows(project: Project) -> str:
             connector_pairs=span.connector_pairs,
             required_margin_db=span.required_margin_db,
         )
-        b = compute_fiber_budget(span.length_km, span.fibre, optics)
-        detail = (
-            f"{b.fiber_loss_db:.2f} dB fibre, {b.splice_loss_db:.2f} dB splices, "
-            f"{b.connector_loss_db:.2f} dB connectors"
-        )
-        extra = ""
-        if b.dispersion_limit_km is not None:
-            extra = (
-                f"; dispersion limit {b.dispersion_limit_km:.1f} km, "
-                f"penalty {b.dispersion_penalty_db:.2f} dB"
+        try:
+            b = compute_fiber_budget(span.length_km, span.fibre, optics)
+            detail = (
+                f"{b.fiber_loss_db:.2f} dB fibre, {b.splice_loss_db:.2f} dB splices, "
+                f"{b.connector_loss_db:.2f} dB connectors"
             )
+            extra = ""
+            if b.dispersion_limit_km is not None:
+                extra = (
+                    f"; dispersion limit {b.dispersion_limit_km:.1f} km, "
+                    f"penalty {b.dispersion_penalty_db:.2f} dB"
+                )
+            margin = f"{b.margin_db:.2f} dB"
+            verdict = b.verdict
+        except ValueError as exc:
+            # Same story as _cable_row: under --force a budget the engine
+            # refuses to compute renders as a failure, not as a crash.
+            margin = "&mdash;"
+            verdict = "FAIL"
+            detail = f"budget could not be computed: {exc}"
+            extra = ""
         rows.append(
             f"<tr><td class='mono'>{esc(span.id)}</td>"
             f"<td>{esc(span.a_end)}</td><td>{esc(span.b_end)}</td>"
             f"<td class='mono'>{esc(span.fibre)}</td>"
             f"<td class='num'>{span.length_km:.2f} km</td>"
-            f"<td class='num'>{b.margin_db:.2f} dB</td>"
-            f"<td>{_pill(b.verdict)}</td>"
+            f"<td class='num'>{margin}</td>"
+            f"<td>{_pill(verdict)}</td>"
             f"<td class='small muted'>{esc(detail)}{esc(extra)}</td></tr>"
         )
     return "".join(rows)
@@ -399,34 +429,44 @@ def build_docs(
     cables_total = 0
     for cable in project.cables:
         cables_total += 1
-        if cable.media in COPPER_TYPES:
-            b = compute_copper_budget(
-                max(cable.length_m, 0.01), cable.media, 4, "1gbase-t"
-            )
-        else:
-            b = compute_fiber_budget(
-                max(cable.length_m / 1000.0, 0.001),
-                cable.media,
-                Optics(tx_power_dbm=2.0, rx_sensitivity_dbm=-28.0),
-            )
+        try:
+            if cable.media in COPPER_TYPES:
+                b = compute_copper_budget(
+                    max(cable.length_m, 0.01), cable.media, 4, "1gbase-t"
+                )
+            else:
+                b = compute_fiber_budget(
+                    max(cable.length_m / 1000.0, 0.001),
+                    cable.media,
+                    Optics(tx_power_dbm=2.0, rx_sensitivity_dbm=-28.0),
+                )
+        except ValueError:
+            # Mirrors _cable_row: a budget the engine refuses to compute is
+            # not a PASS and not a crash.
+            continue
         if b.verdict == "PASS":
             cables_pass += 1
 
     spans_pass = 0
     for span in project.optical_spans:
-        b = compute_fiber_budget(
-            span.length_km,
-            span.fibre,
-            Optics(
-                tx_power_dbm=span.tx_power_dbm,
-                rx_sensitivity_dbm=span.rx_sensitivity_dbm,
-                bitrate_gbps=span.bitrate_gbps,
-                spectral_width_nm=span.spectral_width_nm,
-                splice_count=span.splice_count,
-                connector_pairs=span.connector_pairs,
-                required_margin_db=span.required_margin_db,
-            ),
-        )
+        try:
+            b = compute_fiber_budget(
+                span.length_km,
+                span.fibre,
+                Optics(
+                    tx_power_dbm=span.tx_power_dbm,
+                    rx_sensitivity_dbm=span.rx_sensitivity_dbm,
+                    bitrate_gbps=span.bitrate_gbps,
+                    spectral_width_nm=span.spectral_width_nm,
+                    splice_count=span.splice_count,
+                    connector_pairs=span.connector_pairs,
+                    required_margin_db=span.required_margin_db,
+                ),
+            )
+        except ValueError:
+            # Mirrors _span_rows: a budget the engine refuses to compute is
+            # not a PASS and not a crash.
+            continue
         if b.verdict == "PASS":
             spans_pass += 1
 
@@ -458,11 +498,11 @@ def build_docs(
 <thead><tr><th>Rack</th><th>Location</th><th class="num">Height</th><th class="num">Panels</th><th>Elevation</th></tr></thead>
 <tbody>
 {''.join(
-    f"<tr><td><a href='racks/{esc(r.id)}.html'>{esc(r.name)}</a></td>"
+    f"<tr><td><a href='racks/{esc(_rack_filename(r.id))}'>{esc(r.name)}</a></td>"
     f"<td class='muted'>{esc(r.location)}</td>"
     f"<td class='num'>{r.u_height}U</td>"
     f"<td class='num'>{len(r.panels)}</td>"
-    f"<td><a href='racks/{esc(r.id)}.html'>view drawing &rarr;</a></td></tr>"
+    f"<td><a href='racks/{esc(_rack_filename(r.id))}'>view drawing &rarr;</a></td></tr>"
     for r in project.racks
 )}
 </tbody></table></div>
@@ -583,7 +623,15 @@ propagation through air and does not apply to light inside a glass core.</p></di
 <h2>Port map</h2>
 {port_table}
 """
-        (out / "racks" / f"{rack.id}.html").write_text(
+        # The rack page is written where the id says. Ids are validated
+        # (invalid-rack-id), but --force documents a flagged project anyway,
+        # so this write also guards itself: only the bare name of the id is
+        # used and the resolved path must land in out/racks, so a relative
+        # or absolute id can at worst rename the page inside the site.
+        rack_page = out / "racks" / _rack_filename(rack.id)
+        if rack_page.resolve().parent != (out / "racks").resolve():
+            raise ValueError(f"rack id {rack.id} is not a safe file name")
+        rack_page.write_text(
             _page(project, f"Rack {rack.name}", "", body), encoding="utf-8"
         )
 

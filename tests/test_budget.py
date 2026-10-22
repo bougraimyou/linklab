@@ -187,6 +187,58 @@ def test_fibre_budget_rejects_unknown_fibre_and_bad_length():
         compute_fiber_budget(0.0, "smf")
 
 
+def test_a_nan_length_is_rejected_on_every_medium():
+    # NaN compares false against every bound, so an unguarded NaN length
+    # would walk straight to a PASS verdict.
+    with pytest.raises(ValueError):
+        compute_fiber_budget(float("nan"), "smf")
+    with pytest.raises(ValueError):
+        compute_microwave_budget(float("nan"), 15.0, 20.0, 30.0)
+    with pytest.raises(ValueError):
+        compute_copper_budget(float("nan"), "cat6")
+
+
+def test_nan_optics_are_rejected():
+    with pytest.raises(ValueError):
+        compute_fiber_budget(
+            1.0, "smf", Optics(tx_power_dbm=float("nan"), rx_sensitivity_dbm=-28.0)
+        )
+    with pytest.raises(ValueError):
+        compute_fiber_budget(
+            1.0, "smf", Optics(tx_power_dbm=0.0, rx_sensitivity_dbm=-28.0, bitrate_gbps=float("nan"))
+        )
+    with pytest.raises(ValueError):
+        compute_fiber_budget(
+            1.0,
+            "smf",
+            Optics(
+                tx_power_dbm=0.0,
+                rx_sensitivity_dbm=-28.0,
+                spectral_width_nm=float("nan"),
+            ),
+        )
+
+
+def test_nan_microwave_powers_are_rejected():
+    with pytest.raises(ValueError):
+        compute_microwave_budget(1.0, 15.0, float("nan"), 30.0)
+    with pytest.raises(ValueError):
+        compute_microwave_budget(1.0, 15.0, 20.0, float("nan"))
+
+
+def test_a_zero_spectral_width_is_rejected_instead_of_dividing_by_zero():
+    # 1000/(bitrate * dispersion * 0) used to raise ZeroDivisionError.
+    optics = Optics(
+        tx_power_dbm=0.0,
+        rx_sensitivity_dbm=-28.0,
+        bitrate_gbps=10.0,
+        spectral_width_nm=0.0,
+    )
+    with pytest.raises(ValueError) as excinfo:
+        compute_fiber_budget(1.0, "smf", optics)
+    assert "spectral width" in str(excinfo.value)
+
+
 # ---------------------------------------------------------------------------
 # Microwave budget
 # ---------------------------------------------------------------------------
